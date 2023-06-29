@@ -28,4 +28,33 @@ def newton(f, df, x0, max_it=20, tol=1e-3):
 
     return x0, False, iter
 
-# Other root finding methods...
+
+def bisection(f, a, b, max_iter=1000, tol=1e-7):
+    # Check if the function has no roots or more than one root in the given interval
+    if f(a) * f(b) > 0:
+        print(f'No roots or more than one root in [{a}, {b}]')
+        return None
+
+    # Initialize the midpoint of the interval
+    m = (a + b) / 2
+
+    # Perform the bisection method until the desired tolerance or maximum number of iterations is reached
+    iterations = 0
+    while abs(f(m)) > tol:
+        # Break the loop if the method does not converge within max_iter iterations
+        if iterations >= max_iter:
+            print(f"The method did not converge after {max_iter} iterations.")
+            return None
+
+        # Check which half of the interval to update based on the sign of f(a)*f(m)
+        if f(a) * f(m) < 0:
+            b = m
+        else:
+            a = m
+
+        # Compute the new midpoint
+        m = (a + b) / 2
+        iterations += 1
+
+    # Return the approximate root
+    return m
