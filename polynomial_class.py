@@ -33,7 +33,7 @@ class Polynomial:
 
     def __repr__(self):
         """" return code for regenerating this instance"""
-        return f"Polynomial({self.coeff})"
+        return f"Polynomial({self._coeff})"
 
     def __add__(self, other):
         coeff_sum = self._coeff.copy()  # Start with the coefficients of this polynomial
