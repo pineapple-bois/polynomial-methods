@@ -29,7 +29,7 @@ def newton(f, df, x0, max_it=20, tol=1e-3):
     return x0, False, iter
 
 
-def bisection(f, a, b, max_iter=1000, tol=1e-7):
+def bisection(f, a, b, max_iter=1000, tol=1e-3):
     # Check if the function has no roots or more than one root in the given interval
     if f(a) * f(b) > 0:
         print(f'No roots or more than one root in [{a}, {b}]')
@@ -47,9 +47,9 @@ def bisection(f, a, b, max_iter=1000, tol=1e-7):
             return None
 
         # Check which half of the interval to update based on the sign of f(a)*f(m)
-        if f(a) * f(m) < 0:
+        if f(a) * f(m) < 0:  # If 'a' and 'm' bracket a root, update 'b' to 'm'
             b = m
-        else:
+        elif f(b) * f(m) < 0:  # If 'b' and 'm' bracket a root, update 'a' to 'm'
             a = m
 
         # Compute the new midpoint

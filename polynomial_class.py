@@ -82,8 +82,25 @@ class Polynomial:
         return Polynomial(coeff_difference)
 
     def __mul__(self, other):
-        # Implement multiplication of coefficients
-        pass
+        # Create a dictionary to hold the coefficients of the result
+        coeff_product = {}
+
+        # For each term in the first polynomial
+        for powers1, coeff1 in self._coeff.items():
+            # For each term in the other polynomial
+            for powers2, coeff2 in other._coeff.items():
+                # Determine the power and coefficient of the resulting term
+                new_powers = tuple(x + y for x, y in zip(powers1, powers2))
+                new_coeff = coeff1 * coeff2
+
+                # If the resulting term is already in coeff_product, add the new coefficient
+                if new_powers in coeff_product:
+                    coeff_product[new_powers] += new_coeff
+                else:  # Otherwise, add the new term
+                    coeff_product[new_powers] = new_coeff
+
+        # Return a new Polynomial instance with the product of coefficients
+        return Polynomial(coeff_product)
 
     def __str__(self):
         terms = []
@@ -158,9 +175,35 @@ class UniPoly(Polynomial):
                 new_coeff[(powers[0]-1,)] = coeff * powers[0]
         return UniPoly(new_coeff)
 
+    def integrate(self, constant=0):
+        # Create a dictionary to hold the coefficients of the integral
+        integral_coeff = {}
+
+        # Iterate over the coefficients of the polynomial
+        for powers, coeff in self.coeff.items():
+            # Calculate the new power and new coefficient
+            new_power = powers[0] + 1
+            new_coeff = coeff / new_power
+
+            # Add the new term to the integral
+            integral_coeff[(new_power,)] = new_coeff
+
+        # Don't forget about the constant of integration
+        if constant != 0:
+            integral_coeff[(0,)] = constant
+
+        # Return a new UniPoly instance with the coefficients of the integral
+        return UniPoly(integral_coeff)
+
+    def integrate_definite(self, lower_limit, upper_limit):
+        antiderivative = self.integrate()
+        return antiderivative(upper_limit) - antiderivative(lower_limit)
+
     def newton(self, x0, max_it=20, tol=1e-3):
         return root_finding.newton(self._eval_univariate, self.differentiate()._eval_univariate, x0, max_it, tol)
 
+    def bisection(self, a, b, tol=1e-7):
+        return root_finding.bisection(self._eval_univariate, a, b, tol)
 
 class MultiPoly(Polynomial):
     def __init__(self, coefficients: dict):
