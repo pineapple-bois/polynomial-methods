@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from IPython.display import display
+import sympy
 import root_finding
 
 
@@ -17,6 +19,7 @@ class Polynomial:
                 key = (key[0], 0, 0)  # Pad with 0s
             self._coeff[key] = value
 
+        self.expression = None
         # Check if it's a multivariate polynomial
         self.is_multivariate = any(exponent[1] != 0 or exponent[2] != 0 for exponent in self._coeff.keys())
 
@@ -149,6 +152,33 @@ class Polynomial:
             value += coeff * (x ** powers[0]) * (y ** powers[1]) * (z ** powers[2])
         return value
 
+    def _convert_to_sympy_expression(self):
+        if self.expression is None:
+            expr_str = self.__str__()
+            expr_str = expr_str.replace('^', '**')
+
+            parts = expr_str.split()
+            updated_parts = []
+            for part in parts:
+                if '.' in part and part.endswith('.0'):
+                    try:
+                        coefficient = float(part)
+                        if coefficient.is_integer():
+                            part = str(int(coefficient))
+                    except ValueError:
+                        pass
+                updated_parts.append(part)
+
+            expr_str = ' '.join(updated_parts)
+            self.expression = sympy.parsing.sympy_parser.parse_expr(expr_str)
+
+    def display(self):
+        self._convert_to_sympy_expression()
+        display(self.expression)  # This will use Jupyter's display system.
+
+    def save_as_sympy(self):
+        self._convert_to_sympy_expression()
+        return self.expression
 
 class UniPoly(Polynomial):
     def __init__(self, coefficients: dict):
