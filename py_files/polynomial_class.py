@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from IPython.display import display
 import sympy
+from IPython.display import display
 from py_files import root_finding
 
 
@@ -336,5 +336,41 @@ class MultiPoly(Polynomial):
         super().__init__(coefficients)
         if not self.is_multivariate:
             raise ValueError("The provided coefficients don't represent a multivariate polynomial.")
+
+    # Define additional methods ...
+
+class BiVarPoly(MultiPoly):
+    """A class to represent a bi-variate polynomial. Inherits from the MultiPoly class."""
+    def __init__(self, coefficients: dict):
+        """
+        Initialize the BiVarPoly class.
+
+        Args:
+        coefficients (dict): A dictionary of coefficients, where each key is a tuple of exponents
+        corresponding to each variable in the polynomial, and the value is the coefficient.
+        """
+        super().__init__(coefficients)
+        if any(exponent[2] != 0 for exponent in self._coeff.keys()):
+            raise ValueError("The provided coefficients don't represent a bi-variate polynomial.")
+
+    # Define additional methods ...
+
+
+class TriVarPoly(MultiPoly):
+    """A class to represent a tri-variate polynomial. Inherits from the MultiPoly class."""
+    def __init__(self, coefficients: dict):
+        """
+        Initialize the TriVarPoly class.
+
+        Args:
+        coefficients (dict): A dictionary of coefficients, where each key is a tuple of exponents
+        corresponding to each variable in the polynomial, and the value is the coefficient.
+        """
+        super().__init__(coefficients)
+        if all(exponent[2] == 0 for exponent in self._coeff.keys()):
+            raise ValueError("The provided coefficients don't represent a tri-variate polynomial.")
+
+    # Define additional methods ...
+
 
 
