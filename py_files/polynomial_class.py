@@ -6,7 +6,15 @@ from py_files import root_finding
 
 
 class Polynomial:
+    """A class to represent a polynomial."""
     def __init__(self, coefficients: dict):
+        """
+        Initialize the Polynomial class.
+
+        Args:
+        coefficients (dict): A dictionary of coefficients, where each key is a tuple of exponents
+        corresponding to each variable in the polynomial, and the value is the coefficient.
+        """
         if not isinstance(coefficients, dict):
             raise ValueError("Coefficients must be provided as a dictionary.")
 
@@ -32,7 +40,7 @@ class Polynomial:
         self._coeff = value
 
     def __repr__(self):
-        """" return code for regenerating this instance"""
+        """Return a string representation of the Polynomial instance."""
         return f"Polynomial({self._coeff})"
 
     def __add__(self, other):
@@ -117,7 +125,7 @@ class Polynomial:
 
     def __str__(self):
         terms = []
-        for powers, coeff in sorted(self._coeff.items(), key=lambda x: x[0][0], reverse=True):
+        for powers, coeff in sorted(self._coeff.items(), key=lambda x: sum(x[0]), reverse=True):
             if all(power == 0 for power in powers):
                 term = str(coeff)
             else:
@@ -149,6 +157,16 @@ class Polynomial:
         return string
 
     def __call__(self, *args):
+        """Evaluate the polynomial at a specific point.
+
+        Args:
+        *args: The coordinates at which to evaluate the polynomial.
+        x for uni-variate
+        x, y, z for multivariate
+
+        Returns:
+        float: The value of the polynomial at the specified coordinates.
+        """
         if self.is_multivariate:
             return self._eval_multivariate(*args)
         else:
@@ -167,6 +185,16 @@ class Polynomial:
         return value
 
     def _convert_to_sympy_expression(self, rational=False, force=False):
+        """
+        Converts the current polynomial expression into a sympy expression.
+
+        Parameters:
+        rational (bool): If True, the coefficients are converted into sympy Rational type. Default is False.
+        force (bool): If True, the function forcibly converts to sympy expression even if it already exists.
+                      Default is False.
+
+        This function does not return any value. It updates the 'expression' attribute of the Polynomial instance.
+        """
         if self.expression is None or force:
             # Create the symbols x, y, z
             x = sympy.Symbol('x')
@@ -197,21 +225,55 @@ class Polynomial:
                 self.expression = sympy.Poly(polynomial, x)
 
     def display(self):
+        """
+        Displays the sympy expression of the polynomial using IPython's display system.
+
+        The method does not take any parameters and does not return any value.
+        The method calls the '_convert_to_sympy_expression' function internally.
+        Converts the polynomial to a sympy expression.
+        """
         self._convert_to_sympy_expression()
         display(self.expression)  # This will use Jupyter's display system.
 
     def save_as_sympy(self, rational=False):
+        """
+        Saves the polynomial as a sympy expression and returns it.
+
+        Parameters:
+        rational (bool): If True, the coefficients are converted into sympy Rational type. Default is False.
+
+        Returns:
+        sympy.core.expr.Expr : A sympy expression representing the polynomial.
+
+        The method calls the '_convert_to_sympy_expression' function.
+        Converts the polynomial to a sympy expression.
+        """
         self._convert_to_sympy_expression(rational, force=True)
         return self.expression
 
 
 class UniPoly(Polynomial):
+    """A class to represent a uni-variate polynomial. Inherits from the Polynomial class."""
     def __init__(self, coefficients: dict):
+        """
+        Initialize the UniPoly class.
+
+        Args:
+        coefficients (dict): A dictionary of coefficients, where each key is an integer exponent,
+        and the value is the coefficient.
+        """
         super().__init__(coefficients)
         if self.is_multivariate:
             raise ValueError("The provided coefficients don't represent a uni-variate polynomial.")
 
     def plot(self, x_min=-10, x_max=10, num_points=1000):
+        """Plot the polynomial over a specified range.
+
+        Args:
+        x_min (float, optional): The minimum x-value for the plot. Defaults to -10.
+        x_max (float, optional): The maximum x-value for the plot. Defaults to 10.
+        num_points (int, optional): The number of points to generate for the plot. Defaults to 1000.
+        """
         x = np.linspace(x_min, x_max, num_points)
         y = [self._eval_univariate(x_val) for x_val in x]
 
@@ -261,7 +323,15 @@ class UniPoly(Polynomial):
         return root_finding.bisection(self._eval_univariate, a, b, tol)
 
 class MultiPoly(Polynomial):
+    """A class to represent a multivariate polynomial. Inherits from the Polynomial class."""
     def __init__(self, coefficients: dict):
+        """
+        Initialize the MultiPoly class.
+
+        Args:
+        coefficients (dict): A dictionary of coefficients, where each key is a tuple of exponents
+        corresponding to each variable in the polynomial, and the value is the coefficient.
+        """
         super().__init__(coefficients)
         if not self.is_multivariate:
             raise ValueError("The provided coefficients don't represent a multivariate polynomial.")
