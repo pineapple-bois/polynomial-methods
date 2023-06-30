@@ -1,26 +1,6 @@
-# `Polynomial` Class in Python
+# A `Polynomial` Class in Python
 
 A Python package that provides a user-friendly and flexible way to work with polynomials. The package is designed for both beginners looking to explore polynomial mathematics and advanced users needing to perform complex operations on univariate and multivariate polynomials. 
-
-----
-
-### Personal Motivations
-
-"Personally, I found the representation of polynomials as lists of coefficients, such as in NumPy's `numpy.polynomial.polynomial.Polynomial` and SciPy's `scipy.interpolate.BarycentricInterpolator`, to be non-intuitive, especially for sparse polynomials with many zero coefficients."
-
-SymPy's `sympy.polys.polytools.Poly` class offers symbolic representation, which can be very powerful but may also be overkill for simpler use-cases. Moreover, when creating a polynomial from a list of coefficients in SymPy, the list represents the polynomial's coefficients in descending order, which can be confusing when compared to other libraries.
-
-Therefore, I opted to use a dictionary data structure for my Polynomial class, where each key-value pair directly maps a polynomial's degree to its coefficient, offering a clear, intuitive, and flexible approach to polynomial representation.
-
-In addition, this project was an opportunity for me to delve deeper into object-oriented programming, with the added challenge of parsing a string representation of a polynomial into a dictionary".
-
-----
-
-"I also aimed to make the inner workings of polynomial computations more transparent. As a newcomer to the field, I found it challenging to understand the underlying functionality of many classes and functions I used from various modules. My goal was to create a module that, while still a 'black box' in terms of usage (for example, when you call the plot method, a graph appears as if by magic!), has clear and detailed documentation to allow any curious users to understand the 'magic' behind the operations.
-
-Having some experience with the Maxima Computer Algebra System, I wanted to bridge the gap between symbolic computation and Python. Therefore, I've integrated SymPy which allows users to perform complex symbolic computations while maintaining the ease and simplicity of Python.
-
-I hope you find this module useful and intuitive. I welcome any feedback or suggestions for improvement - feel free to open an issue or pull request!"
 
 ----
 
@@ -37,13 +17,13 @@ I hope you find this module useful and intuitive. I welcome any feedback or sugg
 
 ----
 
-## `decompose_polynomial` function
+### `decompose_polynomial` function
 
 Takes a string representation of a polynomial as an argument and returns a dictionary. It works for both univariate and multivariate polynomials.
 
-For univariate polynomials, the function returns a dictionary where the keys are the exponents of 'x' and the values are the corresponding coefficients.
+For univariate polynomials, the function returns a dictionary where the keys are the exponents of $x$ and the values are the corresponding coefficients.
 
-For multivariate polynomials, it returns a dictionary where the keys are tuples of exponents (for 'x', 'y', and 'z') and values are the corresponding coefficients.
+For multivariate polynomials, it returns a dictionary where the keys are tuples of exponents ($x y z$) and values are the corresponding coefficients.
 
 ----
 
@@ -120,6 +100,26 @@ Dives deeper and explores some more complex cases.
 
 A guide-book to the basics of the [SymPy](https://docs.sympy.org/latest/index.html) library. 
 Transcribed with the aid of [Numerical Python](https://jrjohansson.github.io/numericalpython.html) by Robert Johannson.
+
+----
+
+### Personal Motivations
+
+"Personally, I found the representation of polynomials as lists of coefficients, such as in NumPy's `numpy.polynomial.polynomial.Polynomial` and SciPy's `scipy.interpolate.BarycentricInterpolator`, to be non-intuitive, especially for sparse polynomials with many zero coefficients."
+
+SymPy's `sympy.polys.polytools.Poly` class offers symbolic representation, which can be very powerful but may also be overkill for simpler use-cases. Moreover, when creating a polynomial from a list of coefficients in SymPy, the list represents the polynomial's coefficients in descending order, which can be confusing when compared to other libraries.
+
+Therefore, I opted to use a dictionary data structure for my Polynomial class, where each key-value pair directly maps a polynomial's degree to its coefficient, offering a clear, intuitive, and flexible approach to polynomial representation.
+
+In addition, this project was an opportunity for me to delve deeper into object-oriented programming, with the added challenge of parsing a string representation of a polynomial into a dictionary".
+
+----
+
+"I also aimed to make the inner workings of polynomial computations more transparent. As a newcomer to the field, I found it challenging to understand the underlying functionality of many classes and functions I used from various modules. My goal was to create a module that, while still a 'black box' in terms of usage (for example, when you call the plot method, a graph appears as if by magic!), has clear and detailed documentation to allow any curious users to understand the 'magic' behind the operations.
+
+Having some experience with the Maxima Computer Algebra System, I wanted to bridge the gap between symbolic computation and Python. Therefore, I've integrated SymPy which allows users to perform complex symbolic computations while maintaining the ease and simplicity of Python.
+
+I hope you find this module useful and intuitive. I welcome any feedback or suggestions for improvement - feel free to open an issue or pull request!"
 
 ----
 
