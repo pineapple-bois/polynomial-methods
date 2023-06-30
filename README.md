@@ -29,11 +29,11 @@ For multivariate polynomials, it returns a dictionary where the keys are tuples 
 
 ### Quick Start Guide
 ```python
-# Import the class
+# Import
 from polynomial_class import Polynomial, UniPoly, MultiPoly, 
 from poly_dictionary import decompose_polynomial
 
-# Create a univariate Polynomial object from string:
+# Create a uni-variate Polynomial object from string:
 p_str = "2*x**3 - x**2 + 1"
 p_dict = decompose_polynomial(p_str)
 p = UniPoly(p_dict)
@@ -60,7 +60,7 @@ p4 = p1 - p2
 p5 = p1 * p2
 
 # Multiplication by a scalar
-five_p5 = 5 * p5
+five_p2 = 5 * p2
 
 # Compute the derivative:
 dp = p.differentiate()
@@ -118,6 +118,6 @@ pip install -r requirements.txt
 
 #### Future Enhancements
 
-We're working to include methods and operations on multivariate polynomials, including partial differentiation, surface-plotting and stationary point finding and analysis.
+We're working to include methods and operations on multivariate polynomials, including partial differentiation, surface-plotting, and stationary point finding and analysis.
 
 ----
