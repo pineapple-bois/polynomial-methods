@@ -233,7 +233,7 @@ class Polynomial:
         Converts the polynomial to a sympy expression.
         """
         self._convert_to_sympy_expression()
-        display(self.expression)  # This will use Jupyter's display system.
+        display(self.expression)  # This will use Jupyters display system.
 
     def save_as_sympy(self, rational=False):
         """
@@ -321,6 +321,7 @@ class UniPoly(Polynomial):
 
     def bisection(self, a, b, tol=1e-7):
         return root_finding.bisection(self._eval_univariate, a, b, tol)
+
 
 class MultiPoly(Polynomial):
     """A class to represent a multivariate polynomial. Inherits from the Polynomial class."""
