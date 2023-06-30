@@ -105,6 +105,16 @@ class Polynomial:
         # Return a new Polynomial instance with the product of coefficients
         return Polynomial(coeff_product)
 
+    def __rmul__(self, other):
+        # Check if other is a scalar (int or float)
+        if isinstance(other, (int, float)):
+            # Multiply each coefficient by the scalar
+            coeff_product = {key: coeff * other for key, coeff in self._coeff.items()}
+            # Return a new Polynomial instance with the product of coefficients
+            return Polynomial(coeff_product)
+        else:
+            return NotImplemented
+
     def __str__(self):
         terms = []
         for powers, coeff in sorted(self._coeff.items(), key=lambda x: x[0][0], reverse=True):
