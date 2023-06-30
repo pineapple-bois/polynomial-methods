@@ -115,12 +115,16 @@ class Polynomial:
                 vars_str = ['x', 'y', 'z']
                 vars_with_power = [f"{vars_str[i]}^{power}" if power > 1 else f"{vars_str[i]}" for i, power in
                                    enumerate(powers) if power != 0]
-                term = (
-                    "-{}".format(' * '.join(vars_with_power)) if coeff == -1.0 else
-                    "{}".format(' * '.join(vars_with_power)) if coeff == 1.0 else
-                    f"{round(coeff, 4) if '.' in str(coeff) and len(str(coeff).split('.')[1]) > 4 else coeff}"
-                    f" * {' * '.join(vars_with_power)}"
-                )
+                if self.expression is None:  # modify the coefficient only if self.expression is None
+                    term = (
+                        "-{}".format(' * '.join(vars_with_power)) if coeff == -1.0 else
+                        "{}".format(' * '.join(vars_with_power)) if coeff == 1.0 else
+                        f"{round(coeff, 4) if '.' in str(coeff) and len(str(coeff).split('.')[1]) > 4 else coeff}"
+                        f" * {' * '.join(vars_with_power)}"
+                    )
+                else:  # if self.expression is not None, don't round the coefficient
+                    term = f"{coeff} * {' * '.join(vars_with_power)}"
+            # Append the term to the list of terms
             terms.append(term)
 
         string = " + ".join(terms)
@@ -152,33 +156,44 @@ class Polynomial:
             value += coeff * (x ** powers[0]) * (y ** powers[1]) * (z ** powers[2])
         return value
 
-    def _convert_to_sympy_expression(self):
-        if self.expression is None:
-            expr_str = self.__str__()
-            expr_str = expr_str.replace('^', '**')
+    def _convert_to_sympy_expression(self, rational=False, force=False):
+        if self.expression is None or force:
+            # Create the symbols x, y, z
+            x = sympy.Symbol('x')
+            y = sympy.Symbol('y')
+            z = sympy.Symbol('z')
 
-            parts = expr_str.split()
-            updated_parts = []
-            for part in parts:
-                if '.' in part and part.endswith('.0'):
-                    try:
-                        coefficient = float(part)
-                        if coefficient.is_integer():
-                            part = str(int(coefficient))
-                    except ValueError:
-                        pass
-                updated_parts.append(part)
+            if self.is_multivariate:    # different rule for multivariate
+                # Build the polynomial
+                if rational:
+                    polynomial = sum(
+                        sympy.Rational(coeff) * x ** powers[0] * y ** powers[1] * z ** powers[2]
+                        for powers, coeff in self._coeff.items())
+                else:
+                    polynomial = sum(
+                        coeff * x ** powers[0] * y ** powers[1] * z ** powers[2]
+                        for powers, coeff in self._coeff.items())
+                # Create a sympy.Poly object
+                self.expression = sympy.Poly(polynomial, x, y, z)
 
-            expr_str = ' '.join(updated_parts)
-            self.expression = sympy.parsing.sympy_parser.parse_expr(expr_str)
+            else:
+                if rational:
+                    polynomial = sum(
+                        sympy.Rational(str(coeff)) * x ** powers[0] for powers, coeff in self._coeff.items())
+                else:
+                    polynomial = sum(
+                        coeff * x ** powers[0] for powers, coeff in self._coeff.items())
+                # Create a sympy.Poly object
+                self.expression = sympy.Poly(polynomial, x)
 
     def display(self):
         self._convert_to_sympy_expression()
         display(self.expression)  # This will use Jupyter's display system.
 
-    def save_as_sympy(self):
-        self._convert_to_sympy_expression()
+    def save_as_sympy(self, rational=False):
+        self._convert_to_sympy_expression(rational, force=True)
         return self.expression
+
 
 class UniPoly(Polynomial):
     def __init__(self, coefficients: dict):
