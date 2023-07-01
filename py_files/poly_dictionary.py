@@ -74,8 +74,9 @@ def decompose_polynomial(formula: str):
                 if parts[0].replace('.', '').isdigit() or parts[0].replace('-', '').replace('.', '').isdigit():
                     coefficient = float(parts.pop(0))
                 else:
-                    coefficient = -1.0 if term.startswith('-') else 1.0
-                    parts[0] = parts[0][1:]
+                    coefficient = -1.0 if parts[0].startswith('-') else 1.0
+                    if parts[0].startswith('-'):
+                        parts[0] = parts[0][1:]
 
                 # Initialize list of exponents
                 exponents = [0, 0, 0]
