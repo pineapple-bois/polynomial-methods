@@ -23,7 +23,7 @@ Takes a string representation of a polynomial as an argument and returns a dicti
 
 For univariate polynomials, the function returns a dictionary where the keys are the exponents of $x$ and the values are the corresponding coefficients.
 
-For multivariate polynomials, it returns a dictionary where the keys are tuples of exponents ($x y z$) and values are the corresponding coefficients.
+For multivariate polynomials, it returns a dictionary where the keys are tuples of exponents ($x$, $y$, $z$) and values are the corresponding coefficients.
 
 ----
 
