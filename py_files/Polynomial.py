@@ -97,7 +97,7 @@ class Polynomial:
                 coeff_sum[powers] = coeff
 
         # Return a new Polynomial instance with the summed coefficients
-        return self.__class__(coeff_sum)
+        return Polynomial(coeff_sum)
 
     def __sub__(self, other):
         # Start with the coefficients of this polynomial
@@ -122,7 +122,7 @@ class Polynomial:
                 coeff_difference[powers] = -coeff
 
         # Return a new Polynomial instance with the difference of coefficients
-        return self.__class__(coeff_difference)
+        return Polynomial(coeff_difference)
 
     def __mul__(self, other):
         # Create a dictionary to hold the coefficients of the result
@@ -143,7 +143,7 @@ class Polynomial:
                     coeff_product[new_powers] = new_coeff
 
         # Return a new Polynomial instance with the product of coefficients
-        return self.__class__(coeff_product)
+        return Polynomial(coeff_product)
 
     def __rmul__(self, other):
         # Check if other is a scalar (int or float)
@@ -294,6 +294,7 @@ class UniPoly(Polynomial):
         super().__init__(coefficients)
         self.is_bivariate = False
         self.is_trivariate = False
+        self.is_multivariate = False
         if self.num_variables != 1:
             raise ValueError("The provided expression does not represent a uni-variate polynomial.")
 
@@ -364,6 +365,9 @@ class BiVarPoly(Polynomial):
         else:
             self.is_bivariate = True
 
+    def validate_bivariate(self):
+        if self.num_variables != 2:
+            raise ValueError("The provided expression does not represent a bi-variate polynomial.")
 
     def partial_derivative(self, variable, second_variable=None):
         """
@@ -449,7 +453,8 @@ class BiVarPoly(Polynomial):
 
         # Based on the specified plot type, create the appropriate plot
         if plot_type == 'surface':
-            ax.plot_surface(X, Y, Z, rstride=1, cstride=1, linewidth=0, antialiased=False, norm=norm, cmap=mpl.cm.Blues)
+            ax.plot_surface(X, Y, Z, rstride=1, cstride=1, linewidth=0,
+                            antialiased=False, norm=norm, cmap=mpl.cm.Blues)
         elif plot_type == 'wireframe':
             ax.plot_wireframe(X, Y, Z, rstride=2, cstride=2, color="darkgrey")
         elif plot_type == 'contour':
@@ -497,6 +502,10 @@ class TriVarPoly(Polynomial):
         super().__init__(coefficients)
         self.is_trivariate = True
         self.is_multivariate = True
+
+    def validate_trivariate(self):
+        if self.num_variables != 3:
+            raise ValueError("The provided expression does not represent a tri-variate polynomial.")
 
     def partial_derivative(self, variable: str, second_variable: Optional[str] = None,
                            third_variable: Optional[str] = None,
