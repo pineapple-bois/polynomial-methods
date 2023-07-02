@@ -477,6 +477,25 @@ class BiVarPoly(Polynomial):
         plt.show()
 
     def find_stationary_points(self, rational=False):
+        """
+        Calculate the stationary points of a function by setting its derivatives equal to zero.
+
+        Parameters
+        ----------
+        rational : bool, optional
+            If True, the coefficients of the partial derivatives are converted to rational numbers before solving.
+            Default is False, which leaves the coefficients as floating point numbers.
+
+        Returns
+        -------
+        stationary_points : list of tuples
+            The stationary points of the function, represented as tuples of (x, y) coordinates.
+
+        Notes
+        -----
+        The SymPy library's 'solve' function is used to find the stationary points. The result from 'solve' is sometimes
+        a dictionary or a single tuple, so this method converts the result to a list of tuples for consistency.
+        """
         x, y = sympy.symbols('x y')
 
         if rational:
@@ -499,7 +518,37 @@ class BiVarPoly(Polynomial):
         return stationary_points
 
     def Hessian(self, point=None, as_rational=False):
-        """Create the Hessian matrix symbolically."""
+        """
+        Construct the Hessian matrix symbolically based on the second order partial derivatives of a function.
+
+        Parameters
+        ----------
+        point : tuple of floats, optional
+            A point (x, y) at which to evaluate the Hessian matrix. If not provided, the method returns
+            the symbolic Hessian matrix.
+
+        as_rational : bool, optional
+            If True, the coefficients of the Hessian matrix are converted to rational numbers.
+            Default is False, which leaves the coefficients as they are.
+
+        Returns
+        -------
+        H : sympy.Matrix
+            The Hessian matrix of the function. The elements of the matrix are sympy expressions
+            representing the second order partial derivatives of the function. If `point` is provided,
+            these expressions are evaluated at the point.
+
+        Raises
+        ------
+        ValueError
+            If `point` is provided but is not a tuple of length 2.
+
+        Notes
+        -----
+        The Hessian matrix is a square matrix of second-order partial derivatives of a function.
+        It describes the local curvature of the function at a given point. The entries of the Hessian
+        matrix are obtained by taking the partial derivatives of the function with respect to its variables.
+        """
         x, y = sympy.symbols('x y')
 
         # Calculate the second order partial derivatives
@@ -515,14 +564,15 @@ class BiVarPoly(Polynomial):
         # Construct Hessian matrix
         H = sympy.Matrix([[fxx_expr, fxy_expr],
                           [fxy_expr, fyy_expr]])
-
         return H
 
-    def classify_points(self, points: list, as_rational=False):
+    def classify_points(self, points=None, as_rational=False):
         """Classify the stationary points."""
         if points is None:
             points = self.find_stationary_points(rational=as_rational)
-        if points is not None and not isinstance(points, list):
+            print(f"Stationary Points:\n{points}")
+
+        if not isinstance(points, list):
             raise ValueError("Points must be provided as a list of tuples.")
 
         H = self.Hessian(as_rational=as_rational)
@@ -538,25 +588,22 @@ class BiVarPoly(Polynomial):
             classification = self._classify_point(D, H[0, 0])
             results[point] = classification
             print(f"The Hessian matrix is constant and its determinant is {D}.")
-            print(f"The point {point} is a {classification} by the determinant test.")
+            print(f"{point} is a {classification} by the determinant test.")
             display(H)  # Display the constant Hessian matrix
             return results
 
         for point in points:
             # Substitute the point into the Hessian matrix and evaluate it
             H_evaluated = H.subs({'x': point[0], 'y': point[1]})
-
             # Calculate the determinant
             D = H_evaluated.det()
-
             # Classify the point
             classification = self._classify_point(D, H_evaluated[0, 0])
             results[point] = classification
             print("-----------------")
-            print(f"After substituting the point {point} into the Hessian matrix:")
+            print(f"Substituting {point} into the Hessian matrix:")
             display(H_evaluated)  # Display the evaluated Hessian matrix
-            print(f"The point {point} is a {classification} by the determinant test.")
-
+            print(f"{point} is a {classification} by the determinant test.")
         return results
 
     def _classify_point(self, D, fxx):
@@ -570,6 +617,58 @@ class BiVarPoly(Polynomial):
         else:
             return "Test inconclusive"
 
+    def gradient(self, point=None, rational=False):
+        """
+        Compute the gradient of the function at a given point.
+
+        The gradient is a vector that points in the direction of the greatest rate of increase of the function,
+        and whose magnitude is the rate of increase in that direction.
+
+        Parameters
+        ----------
+        point : tuple of floats
+            The point (x, y) at which to compute the gradient.
+        rational : bool, optional
+            If True, the coefficients of the partial derivatives are converted to rational numbers before solving.
+            Default is False, which leaves the coefficients as floating point numbers.
+
+        Notes
+        -----
+        The gradient of a function f(x, y) at a point (a, b) is defined as:
+        grad f(a, b) = f_x(a, b)i + f_y(a, b)j
+        where f_x and f_y are the partial derivatives of f with respect to x and y, respectively.
+        """
+        x, y = sympy.symbols('x y')
+
+        # Compute the partial derivatives
+        fx = self.partial_derivative('x')
+        fy = self.partial_derivative('y')
+
+        # Save as sympy and cast as rational if requested
+        if rational:
+            fx_sympy = fx.save_as_sympy(rational=True).as_expr()
+            fy_sympy = fy.save_as_sympy(rational=True).as_expr()
+        else:
+            fx_sympy = fx.save_as_sympy().as_expr()
+            fy_sympy = fy.save_as_sympy().as_expr()
+
+        # If a point is specified, evaluate the gradient at that point
+        if point is not None:
+            # Check the point parameter
+            if not isinstance(point, tuple) or len(point) != 2:
+                raise ValueError("`point` must be a tuple of length 2.")
+
+            # Evaluate the derivatives at the point
+            df_dx = fx_sympy.subs({'x': point[0], 'y': point[1]})
+            df_dy = fy_sympy.subs({'x': point[0], 'y': point[1]})
+        else:
+            # If no point is specified, return the symbolic gradient
+            df_dx = fx_sympy
+            df_dy = fy_sympy
+
+        gradient = sympy.Matrix([[df_dx],
+                                 [df_dy]])
+        return gradient
 
 class TriVarPoly(Polynomial):
     """A class to represent a tri-variate polynomial. Inherits from the Polynomial class."""
@@ -650,7 +749,3 @@ class TriVarPoly(Polynomial):
             derived_poly = derived_poly.partial_derivative(third_variable, print_progress)
 
         return derived_poly
-    # Define additional methods for tri-variate polynomials...
-
-
-
