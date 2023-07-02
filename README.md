@@ -12,7 +12,7 @@ A Python package that provides a user-friendly and flexible way to work with pol
 - **Evaluation**: Evaluate a polynomial at a point $(x,y,z)$.
 - **Operations on Polynomials**: Supports polynomial addition, subtraction, and polynomial and scalar multiplication.
 - **Differentiation & Integration**: Ability to compute the derivative of a univariate polynomial and definite and indefinite integrals.
-- **Root Finding**: Approximates roots numerically using [Newton-Raphson] method.
+- **Root Finding**: Approximates roots numerically using [Newton-Raphson](https://en.wikipedia.org/wiki/Newton%27s_method) method.
 - **Plotting**: Plot a line in 2D space or a surface in 3D space.
 - **Conversion to SymPy**: Allows conversion to a SymPy expression for more advanced operations.
 ----
