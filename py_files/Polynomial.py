@@ -31,8 +31,6 @@ class Polynomial:
         self.expression = None
         self.num_variables = self._calculate_num_variables()
         self.is_multivariate = self.num_variables > 1
-        self.is_bivariate = self.num_variables == 2
-        self.is_trivariate = self.num_variables == 3
 
     def _calculate_num_variables(self):
         num_variables = 0
@@ -50,6 +48,28 @@ class Polynomial:
     @coeff.setter
     def coeff(self, value):
         self._coeff = value
+
+    @classmethod
+    def create(self, coefficients):
+        """Create a new Polynomial instance based on the number of variables in the coefficients."""
+        num_variables = self._calculate_num_variables(coefficients)
+        if num_variables == 1:
+            return UniPoly(coefficients)
+        elif num_variables == 2:
+            return BiVarPoly(coefficients)
+        elif num_variables == 3:
+            return TriVarPoly(coefficients)
+        else:
+            raise ValueError("Too many variables!")
+
+    @staticmethod
+    def count_variables(_coeff):
+        max_variables = 0
+        for powers in coefficients.keys():
+            variables = sum(1 for power in powers if power != 0)
+            if variables > max_variables:
+                max_variables = variables
+        return max_variables
 
     def __repr__(self):
         """Return a string representation of the Polynomial instance."""
@@ -77,7 +97,7 @@ class Polynomial:
                 coeff_sum[powers] = coeff
 
         # Return a new Polynomial instance with the summed coefficients
-        return Polynomial(coeff_sum)
+        return self.__class__(coeff_sum)
 
     def __sub__(self, other):
         # Start with the coefficients of this polynomial
@@ -102,7 +122,7 @@ class Polynomial:
                 coeff_difference[powers] = -coeff
 
         # Return a new Polynomial instance with the difference of coefficients
-        return Polynomial(coeff_difference)
+        return self.__class__(coeff_difference)
 
     def __mul__(self, other):
         # Create a dictionary to hold the coefficients of the result
@@ -123,7 +143,7 @@ class Polynomial:
                     coeff_product[new_powers] = new_coeff
 
         # Return a new Polynomial instance with the product of coefficients
-        return Polynomial(coeff_product)
+        return self.__class__(coeff_product)
 
     def __rmul__(self, other):
         # Check if other is a scalar (int or float)
@@ -131,7 +151,7 @@ class Polynomial:
             # Multiply each coefficient by the scalar
             coeff_product = {key: coeff * other for key, coeff in self._coeff.items()}
             # Return a new Polynomial instance with the product of coefficients
-            return Polynomial(coeff_product)
+            return self.__class__(coeff_product)
         else:
             return NotImplemented
 
@@ -272,7 +292,9 @@ class UniPoly(Polynomial):
         and the value is the coefficient.
         """
         super().__init__(coefficients)
-        if self.is_bivariate or self.is_trivariate:
+        self.is_bivariate = False
+        self.is_trivariate = False
+        if self.num_variables != 1:
             raise ValueError("The provided expression does not represent a uni-variate polynomial.")
 
     def plot(self, x_min=-10, x_max=10, num_points=1000):
@@ -342,6 +364,7 @@ class BiVarPoly(Polynomial):
         else:
             self.is_bivariate = True
 
+
     def partial_derivative(self, variable, second_variable=None):
         """
         Compute the partial derivative of the polynomial.
@@ -382,7 +405,11 @@ class BiVarPoly(Polynomial):
             # If no terms are present after differentiation, return a constant (0)
             return Polynomial({(0, 0, 0): 0.0})
 
-        derived_poly = BiVarPoly(new_coeff)
+        # Determine the appropriate class for the derived polynomial
+        if self.count_variables(new_coeff) > 1:
+            derived_poly = BiVarPoly(new_coeff)
+        else:
+            derived_poly = Polynomial(new_coeff)
 
         if second_variable is not None:
             derived_poly = derived_poly.partial_derivative(second_variable)
@@ -468,10 +495,8 @@ class TriVarPoly(Polynomial):
     """A class to represent a tri-variate polynomial. Inherits from the Polynomial class."""
     def __init__(self, coefficients: dict):
         super().__init__(coefficients)
-        if self.num_variables != 3:
-            self.is_trivariate = False
-        else:
-            self.is_trivariate = True
+        self.is_trivariate = True
+        self.is_multivariate = True
 
     def partial_derivative(self, variable: str, second_variable: Optional[str] = None,
                            third_variable: Optional[str] = None,
