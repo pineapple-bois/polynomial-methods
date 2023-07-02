@@ -13,7 +13,13 @@ A Python package that provides a user-friendly and flexible way to work with pol
 - **Root Finding**: Approximates roots numerically using Newton-Raphson and Bisection methods.
 - **Plotting**: Capability to plot univariate polynomials.
 - **Conversion to SymPy**: Allows converting the polynomial to a SymPy expression for more advanced operations.
-- **Multivariate Polynomials**: "Support for multivariate polynomials is currently under development"
+----
+**Multivariate Polynomials**: 
+- `BiVarPoly` class;
+**Partial differentiation**, finding of **stationary points**, classifying said points with a **Hessian matrix** and **surface plotting**.
+
+- `TriVarPoly` class;
+**Partial differentiation** up to the third degree.
 
 ----
 
@@ -23,7 +29,7 @@ Takes a string representation of a polynomial as an argument and returns a dicti
 
 For univariate polynomials, the function returns a dictionary where the keys are the exponents of $x$ and the values are the corresponding coefficients.
 
-For multivariate polynomials, it returns a dictionary where the keys are tuples of exponents ($x$, $y$, $z$) and values are the corresponding coefficients.
+For multivariate polynomials, the function returns a dictionary where the keys are tuples of exponents ($x$, $y$, $z$) and values are the corresponding coefficients.
 
 ----
 
@@ -89,14 +95,35 @@ mp = MultiPoly(mp_dict)    # Functionality to be added soon
 # Print the string representation of the polynomial:
 print(p)
 ```
+### Within the `testing` directory, more complex cases are explored. 
 
-### `testing.ipynb`
-
-Dives deeper and explores some more complex cases.
+Each notebook begins by defining 6 polynomials. These can be redefined and session code used for the different instances.
 
 ----
 
-### `symbolic_computation.ipynb`
+#### `testing.ipynb`
+
+Explores some of the basic functionality inherited by all classes within the module.
+
+Uni-variate polynomials are explored in more depth.
+
+----
+
+#### `partial_testing.ipynb`
+
+Partial differentiation is tested for polynomials $f(x,y)$ in class `BiVarPoly`.
+
+Tested up to the third partial derivative for polynomials $f(x,y,z)$ in class `TriVarPoly`
+
+----
+
+#### `surface_testing.ipynb`
+
+More advanced multi-variate calculus methods are tested for class `BiVarPoly`.
+
+----
+
+#### `symbolic_computation.ipynb`
 
 A guide-book to the basics of the [SymPy](https://docs.sympy.org/latest/index.html) library. 
 Transcribed with the aid of [Numerical Python](https://jrjohansson.github.io/numericalpython.html) by Robert Johannson.
@@ -154,10 +181,5 @@ Then import the package into your Python project
 from polynomial_class import Polynomial, UniPoly, MultiPoly
 from poly_dictionary import decompose_polynomial
 ```
-----
-
-#### Future Enhancements
-
-I'm working hard to include methods and operations on multivariate polynomials, including partial differentiation, surface-plotting, and stationary point finding and analysis.
 
 ----
