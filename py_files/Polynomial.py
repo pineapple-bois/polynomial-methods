@@ -65,7 +65,7 @@ class Polynomial:
     @staticmethod
     def count_variables(_coeff):
         max_variables = 0
-        for powers in coefficients.keys():
+        for powers in _coeff.keys():
             variables = sum(1 for power in powers if power != 0)
             if variables > max_variables:
                 max_variables = variables
