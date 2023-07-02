@@ -1,4 +1,12 @@
-# A `Polynomial` Class in Python
+# A `Polynomial` Class
+
+----
+
+A polynomial in a single indeterminate $x$ can be written in the form;
+
+$a\_n x^n+a\_{n-1} x^{n-1}+\cdots+a\_2 x^2+a\_1 x+a\_0, n \in \mathbb{Z}^+$
+
+----
 
 A Python package that provides a user-friendly and flexible way to work with polynomials. The package is designed for both beginners looking to explore polynomial mathematics and advanced users needing to perform complex operations on univariate and multivariate polynomials. 
 
