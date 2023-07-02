@@ -2,12 +2,6 @@
 
 ----
 
-A polynomial in a single indeterminate $x$ can be written in the form;
-
-$a\_n x^n+a\_{n-1} x^{n-1}+\cdots+a\_2 x^2+a\_1 x+a\_0, n \in \mathbb{Z}^+$
-
-----
-
 A Python package that provides a user-friendly and flexible way to work with polynomials. The package is designed for both beginners looking to explore polynomial mathematics and advanced users needing to perform complex operations on univariate and multivariate polynomials. 
 
 ----
@@ -108,13 +102,13 @@ tripoly = TriVarPoly(bip_dict)
 # Print the string representation of the polynomial:
 print(p)
 ```
-### Within the `testing` directory, more complex cases are explored. 
+#### Within the `testing` directory, more complex cases are explored through Jupyter notebook sessions. 
 
-Each notebook begins by defining 6 polynomials. These can be redefined and session code used for the different instances.
+Each notebook begins by defining some example polynomials. These can be redefined and session code used for the new instances.
 
 ----
 
-#### `testing.ipynb`
+#### [class_testing.ipynb](https://github.com/pineapple-bois/polynomial-methods/blob/main/testing/class_testing.ipynb)
 
 Explores some of the basic functionality inherited by all classes within the module.
 
@@ -122,7 +116,7 @@ Uni-variate polynomials are explored in more depth.
 
 ----
 
-#### `partial_testing.ipynb`
+#### [partial_testing.ipynb](https://github.com/pineapple-bois/polynomial-methods/blob/main/testing/partial_testing.ipynb)
 
 Partial differentiation is tested for polynomials $f(x,y)$ in class `BiVarPoly`.
 
@@ -130,13 +124,13 @@ Tested up to the third partial derivative for polynomials $f(x,y,z)$ in class `T
 
 ----
 
-#### `surface_testing.ipynb`
+#### [surface_testing.ipynb](https://github.com/pineapple-bois/polynomial-methods/blob/main/testing/surface_testing.ipynb)
 
 More advanced multi-variate calculus methods are tested for class `BiVarPoly`.
 
 ----
 
-#### `symbolic_computation.ipynb`
+#### [symbolic_computation.ipynb](https://github.com/pineapple-bois/polynomial-methods/blob/main/testing/symbolic_computation.ipynb)
 
 A guide-book to the basics of the [SymPy](https://docs.sympy.org/latest/index.html) library. 
 Transcribed with the aid of [Numerical Python](https://jrjohansson.github.io/numericalpython.html) by Robert Johannson.
@@ -145,21 +139,21 @@ Transcribed with the aid of [Numerical Python](https://jrjohansson.github.io/num
 
 ### Personal Motivations
 
-"Personally, I found the representation of polynomials as lists of coefficients, such as in NumPy's `numpy.polynomial.polynomial.Polynomial` and SciPy's `scipy.interpolate.BarycentricInterpolator`, to be non-intuitive, especially for sparse polynomials with many zero coefficients."
+Personally, I found the representation of polynomials as lists of coefficients, such as in NumPy's `numpy.polynomial.polynomial.Polynomial` and SciPy's `scipy.interpolate.BarycentricInterpolator`, to be non-intuitive, especially for sparse polynomials with many zero coefficients.
 
 SymPy's `sympy.polys.polytools.Poly` class offers symbolic representation, which can be very powerful but may also be overkill for simpler use-cases. Moreover, when creating a polynomial from a list of coefficients in SymPy, the list represents the polynomial's coefficients in descending order, which can be confusing when compared to other libraries.
 
 Therefore, I opted to use a dictionary data structure for my Polynomial class, where each key-value pair directly maps a polynomial's degree to its coefficient, offering a clear, intuitive, and flexible approach to polynomial representation.
 
-In addition, this project was an opportunity for me to delve deeper into object-oriented programming, with the added challenge of parsing a string representation of a polynomial into a dictionary".
+In addition, this project was an opportunity for me to delve deeper into object-oriented programming, with the added challenge of parsing a string representation of a polynomial into a dictionary.
 
 ----
 
-"As a newcomer to programming, I found it challenging to understand the underlying functionality of many classes and functions within the `SciPy` stack. My goal was to create a module that, while still a 'black box' in terms of usage (for example, when you call the plot method, a graph appears as if by magic!), has clear and detailed documentation to allow any curious users to understand the 'magic' behind the operations.
+As a newcomer to programming, I found it challenging to understand the underlying functionality of many classes and functions within the `SciPy` stack. My goal was to create a module that, while still a 'black box' in terms of usage (for example, when you call the plot method, a graph appears as if by magic!), has clear and detailed documentation to allow any curious users to understand the 'magic' behind the operations.
 
 Having some experience with the Maxima Computer Algebra System, I wanted to bridge the gap between symbolic computation and Python. Therefore, I've integrated SymPy which allows users to perform complex symbolic computations while maintaining the ease and simplicity of Python.
 
-I hope you find this module useful and intuitive. I welcome any feedback or suggestions for improvement - feel free to open an issue or pull request!"
+I hope you find this module useful and intuitive. I welcome any feedback or suggestions for improvement - feel free to open an issue or pull request!
 
 ----
 
