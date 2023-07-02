@@ -7,12 +7,12 @@ A Python package that provides a user-friendly and flexible way to work with pol
 ### Key Features
 
 - **Creation of Polynomials**: Allows creating polynomials using a dictionary format for coefficients. Supports both univariate and multivariate polynomials.
-- **Evaluation**: Evaluate a polynomial for given values of variables.
+- **Evaluation**: Evaluate a polynomial at a point $(x,y,z)$.
 - **Operations on Polynomials**: Supports polynomial addition, subtraction, and polynomial and scalar multiplication.
 - **Differentiation & Integration**: Ability to compute the derivative of a univariate polynomial and definite and indefinite integrals.
-- **Root Finding**: Approximates roots numerically using Newton-Raphson and Bisection methods.
-- **Plotting**: Capability to plot univariate polynomials.
-- **Conversion to SymPy**: Allows converting the polynomial to a SymPy expression for more advanced operations.
+- **Root Finding**: Approximates roots numerically using [Newton-Raphson] method.
+- **Plotting**: Plot a line in 2D space or a surface in 3D space.
+- **Conversion to SymPy**: Allows conversion to a SymPy expression for more advanced operations.
 ----
 **Multivariate Polynomials**: 
 - `BiVarPoly` class;
@@ -36,8 +36,8 @@ For multivariate polynomials, the function returns a dictionary where the keys a
 ### Quick Start Guide
 ```python
 # Import
-from polynomial_class import Polynomial, UniPoly, MultiPoly
-from poly_dictionary import decompose_polynomial
+from py_files.Polynomial import Polynomial, UniPoly, BiVarPoly, TriVarPoly
+from py_files.poly_dictionary import decompose_polynomial
 
 # Create a uni-variate Polynomial object from string:
 p_str = "2*x**3 - x**2 + 1"
@@ -87,10 +87,15 @@ p.plot()
 ## option to create with rational coefficients
 sym_p = p.save_as_sympy(rational=True)
 
-# Create a multivariate Polynomial object:
-mp_str = "x**2*y + -x*y**2 + 1"
-mp_dict = decompose_polynomial(mp_str)
-mp = MultiPoly(mp_dict)    # Functionality to be added soon
+# Create a multivariate Polynomial object in two variables:
+bip_str = "x**2*y + -x*y**2 + 1"
+bip_dict = decompose_polynomial(bip_str)
+bipoly = BivarPoly(bip_dict)    
+
+# Create a multivariate Polynomial object in three variables:
+trip_str = "3*x**2*y*z + -x*y**2 + z + 1"
+trip_dict = decompose_polynomial(trip_str)
+tripoly = TriVarPoly(bip_dict)    
 
 # Print the string representation of the polynomial:
 print(p)
@@ -142,7 +147,7 @@ In addition, this project was an opportunity for me to delve deeper into object-
 
 ----
 
-"I also aimed to make the inner workings of polynomial computations more transparent. As a newcomer to the field, I found it challenging to understand the underlying functionality of many classes and functions I used from various modules. My goal was to create a module that, while still a 'black box' in terms of usage (for example, when you call the plot method, a graph appears as if by magic!), has clear and detailed documentation to allow any curious users to understand the 'magic' behind the operations.
+"As a newcomer to programming, I found it challenging to understand the underlying functionality of many classes and functions within the `SciPy` stack. My goal was to create a module that, while still a 'black box' in terms of usage (for example, when you call the plot method, a graph appears as if by magic!), has clear and detailed documentation to allow any curious users to understand the 'magic' behind the operations.
 
 Having some experience with the Maxima Computer Algebra System, I wanted to bridge the gap between symbolic computation and Python. Therefore, I've integrated SymPy which allows users to perform complex symbolic computations while maintaining the ease and simplicity of Python.
 
