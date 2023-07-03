@@ -29,17 +29,8 @@ class Polynomial:
             self._coeff[key] = value
 
         self.expression = None
-        self.num_variables = self._calculate_num_variables()
+        self.num_variables = Polynomial._calculate_num_variables(self._coeff)
         self.is_multivariate = self.num_variables > 1
-
-    def _calculate_num_variables(self):
-        num_variables = 0
-        num_positions = len(next(iter(self._coeff.keys())))
-        for position in range(num_positions):
-            variables_present = any(position < len(powers) and powers[position] != 0 for powers in self._coeff.keys())
-            if variables_present:
-                num_variables += 1
-        return num_variables
 
     @property
     def coeff(self):
@@ -49,10 +40,37 @@ class Polynomial:
     def coeff(self, value):
         self._coeff = value
 
+    @staticmethod
+    def _calculate_num_variables(coefficients):
+        num_variables = 0
+        num_positions = len(next(iter(coefficients.keys())))
+        for position in range(num_positions):
+            variables_present = any(position < len(powers) and powers[position] != 0 for powers in coefficients.keys())
+            if variables_present:
+                num_variables += 1
+        return num_variables
+
+
     @classmethod
-    def create(self, coefficients):
-        """Create a new Polynomial instance based on the number of variables in the coefficients."""
-        num_variables = self._calculate_num_variables(coefficients)
+    def create(cls, coefficients):
+        """
+        This method is a factory method which allows us to create an instance of
+        a Polynomial subclass (UniPoly, BiVarPoly, or TriVarPoly) based on the number of
+        variables in the coefficients.
+
+        Args:
+            coefficients (dict): A dictionary of coefficients. The keys are tuples of powers,
+            corresponding to each variable in the polynomial, and the values are the coefficients.
+
+        Returns:
+            Polynomial: An instance of one of the Polynomial subclasses - UniPoly, BiVarPoly, or TriVarPoly.
+
+        Raises:
+            ValueError: If there are more than three variables in the coefficients.
+        """
+        num_variables = Polynomial._calculate_num_variables(coefficients)
+        if num_variables == 0:
+            return ConstantPoly(coefficients)
         if num_variables == 1:
             return UniPoly(coefficients)
         elif num_variables == 2:
@@ -61,15 +79,6 @@ class Polynomial:
             return TriVarPoly(coefficients)
         else:
             raise ValueError("Too many variables!")
-
-    @staticmethod
-    def count_variables(_coeff):
-        max_variables = 0
-        for powers in _coeff.keys():
-            variables = sum(1 for power in powers if power != 0)
-            if variables > max_variables:
-                max_variables = variables
-        return max_variables
 
     def __repr__(self):
         """Return a string representation of the Polynomial instance."""
@@ -285,6 +294,14 @@ class Polynomial:
             return self.expression  # Return as a sympy.Poly object
 
 
+class ConstantPoly(Polynomial):
+    """A class to represent a constant polynomial."""
+    def __init__(self, coefficients: dict):
+        super().__init__(coefficients)
+        if self.num_variables != 0:
+            raise ValueError("The provided expression does not represent a constant.")
+
+
 class UniPoly(Polynomial):
     """A class to represent a uni-variate polynomial. Inherits from the Polynomial class."""
     def __init__(self, coefficients: dict):
@@ -359,17 +376,10 @@ class UniPoly(Polynomial):
         return root_finding.bisection(self.__call__, a, b, tol)
 
 
-
 class BiVarPoly(Polynomial):
     """A class to represent a bi-variate polynomial. Inherits from the Polynomial class."""
     def __init__(self, coefficients: dict):
         super().__init__(coefficients)
-        if self.num_variables != 2:
-            self.is_bivariate = False
-        else:
-            self.is_bivariate = True
-
-    def validate_bivariate(self):
         if self.num_variables != 2:
             raise ValueError("The provided expression does not represent a bi-variate polynomial.")
 
@@ -405,18 +415,20 @@ class BiVarPoly(Polynomial):
                     new_powers = (powers[0], (powers[1] - 1), 0)
                     new_coeff[new_powers] = coeff * powers[1]
 
+        #print(new_coeff)        # DEBUG
+
         if not new_coeff:
             # If no terms are present after differentiation, return a constant (0)
-            return BiVarPoly({(0, 0, 0): 0.0})
+            return Polynomial.create({(0, 0, 0): 0})
 
-        # Determine the appropriate class for the derived polynomial
-        if self.count_variables(new_coeff) > 1:
-            derived_poly = BiVarPoly(new_coeff)
-        else:
-            derived_poly = BiVarPoly(new_coeff)  # Keep it as BiVarPoly, even if it becomes univariate
+        # Use the factory method to create the correct polynomial type
+        derived_poly = Polynomial.create(new_coeff)
+        #print(type(derived_poly))       # DEBUG
 
         if second_variable is not None:
             derived_poly = derived_poly.partial_derivative(second_variable)
+        # maybe need method to return 0 from constant poly
+        # if differentiating a constant with respect to a non-existent variable
 
         return derived_poly
 
@@ -621,8 +633,8 @@ class BiVarPoly(Polynomial):
         """
         Compute the gradient of the function at a given point.
 
-        The gradient is a vector that points in the direction of the greatest rate of increase of the function,
-        and whose magnitude is the rate of increase in that direction.
+        The gradient is a vector that points in the direction of the greatest rate of chaneg of the function,
+        whose magnitude is the rate of change in that direction.
 
         Parameters
         ----------
@@ -670,14 +682,11 @@ class BiVarPoly(Polynomial):
                                  [df_dy]])
         return gradient
 
+
 class TriVarPoly(Polynomial):
-    """A class to represent a tri-variate polynomial. Inherits from the Polynomial class."""
+    """A class to represent a tri-variate polynomial."""
     def __init__(self, coefficients: dict):
         super().__init__(coefficients)
-        self.is_trivariate = True
-        self.is_multivariate = True
-
-    def validate_trivariate(self):
         if self.num_variables != 3:
             raise ValueError("The provided expression does not represent a tri-variate polynomial.")
 
@@ -735,9 +744,10 @@ class TriVarPoly(Polynomial):
 
         if not new_coeff:
             # If no terms are present after differentiation, return a constant (0)
-            return Polynomial({(0, 0, 0): 0.0})
+            return Polynomial.create({(0, 0, 0): 0})
 
-        derived_poly = TriVarPoly(new_coeff)
+        # Use the factory method to create the correct polynomial type
+        derived_poly = Polynomial.create(new_coeff)
 
         if second_variable is not None:
             if third_variable is not None:
